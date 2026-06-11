@@ -1,0 +1,24 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: linter flags the AI sample
+        run: |
+          if python3 skills/anti-ai-tell/lint.py tests/sample-ai.txt --prose; then
+            echo "AI sample passed lint - detector broken"; exit 1
+          fi
+      - name: linter passes the human sample
+        run: python3 skills/anti-ai-tell/lint.py tests/sample-human.txt --prose
+      - name: README passes its own lint
+        run: python3 skills/anti-ai-tell/lint.py README.md
+      - name: adapters are in sync with the generator
+        run: |
+          python3 build_adapters.py
+          git diff --exit-code adapters/
+      - name: plugin skill copy is in sync
+        run: diff -r skills/anti-ai-tell plugins/anti-ai-tell/skills/anti-ai-tell
