@@ -1,0 +1,25 @@
+---
+description: Anti-AI-tell writing rules. Apply to all prose output (docs, comments, commit messages, README content, user-facing strings).
+globs:
+alwaysApply: true
+---
+
+# Writing style: no AI tells
+
+When writing any prose (documentation, READMEs, comments, commit messages,
+PR descriptions, user-facing copy):
+
+- Never use: delve, tapestry, showcase, underscore, meticulous, commendable,
+  realm, game-changer, seamless, groundbreaking, cutting-edge, leverage,
+  harness, unveil, revolutionize, transformative, testament, pivotal,
+  intricate, vibrant, boasts, landscape (figurative), navigating (figurative).
+- No em-dashes. Use commas, periods, or parentheses.
+- No "not just X, but Y" constructions. Assert directly.
+- Write "is/are/has" instead of "serves as / stands as / boasts / represents".
+- Mix sentence lengths; never three similar-length sentences in a row.
+- No throat-clearing openers ("It's worth noting") or closing bows
+  ("In conclusion").
+- Concrete over abstract: numbers, names, examples. Name sources; never
+  "studies show" without which study.
+- Take positions with reasons. No symmetric hedging.
+- Before finishing prose, re-scan for em-dashes and banned words; fix them.

@@ -1,0 +1,7 @@
+I spent three weeks trying to get our standup down from 25 minutes to 10. Failed. What worked, in the end, was killing it entirely.
+
+Here's the thing nobody told me: the standup wasn't the problem. We had four people blocked on the same flaky CI runner, and a daily meeting gave everyone a place to mention it without anyone owning it. Once Priya filed the ticket and actually fixed the runner (turned out to be a disk-space cron that had been silently failing since March), the standup had nothing left to do.
+
+I was wrong about async updates too. I'd pushed hard for them in January. Two months of Slack threads later, nobody read them, including me.
+
+So my advice is narrower than the productivity blogs would like: find the one recurring blocker everyone complains about sideways, assign it a name and a deadline, and see what your meetings look like after. Ours look like nothing. That took the schedule from twelve hours of meetings a week to about four, and honestly the four that remain are good.

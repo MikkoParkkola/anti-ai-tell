@@ -1,0 +1,18 @@
+{
+  "name": "anti-ai-tell",
+  "owner": {
+    "name": "Mikko Parkkola",
+    "url": "https://github.com/MikkoParkkola"
+  },
+  "metadata": {
+    "description": "anti-ai-tell plugin for Claude Code: writing skill + linter that keeps prose from reading as AI-generated.",
+    "version": "2.0.0"
+  },
+  "plugins": [
+    {
+      "name": "anti-ai-tell",
+      "source": "./plugins/anti-ai-tell",
+      "description": "Three-tier anti-AI-tell writing discipline: generation constraints, mechanical lint (13 measured tells), judgment-pass checklist. Evidence-based word lists from corpus studies, era-tagged."
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "anti-ai-tell",
+  "version": "2.0.0",
+  "description": "Three-tier discipline for prose that doesn't read as AI-written: generation-time constraints, a mechanical linter for measured AI tells, and a judgment-pass checklist.",
+  "author": {
+    "name": "Mikko Parkkola",
+    "url": "https://github.com/MikkoParkkola"
+  }
+}

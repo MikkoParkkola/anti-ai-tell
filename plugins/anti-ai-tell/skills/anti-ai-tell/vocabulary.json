@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "description": "AI-overused vocabulary, era-tagged. Single source of truth for lint.py and the generation-time prompt. Word lists rot as models change (delve era gave way to showcasing era); track Wikipedia WP:AISIGNS and Kobak-style corpus studies for updates.",
+    "evidence": {
+      "kobak_2025": "Science Advances 11(27) / arXiv 2406.07016 — excess-vocabulary ratios in 15.1M PubMed abstracts: delves r=28.0, underscores r=13.8, showcasing r=10.7",
+      "liang_2024": "ICML 2024 / arXiv 2403.07183 — ICLR-review fold-increases: meticulous 34.7x, intricate 11.2x, commendable 9.8x; adjectives = most stable POS signal",
+      "wikipedia_aisigns": "https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing — era breakdown, academically cited",
+      "fairbanks_2026": "https://www.theatlantic.com/technology/2026/05/how-to-tell-ai-writing/687345/ — cites Max Planck preprint arXiv 2409.01754 (delve, comprehend, boast, swift, meticulous spreading into speech)"
+    },
+    "updated": "2026-06-11"
+  },
+  "hard_ban": {
+    "_comment": "Highest measured ratios. No legitimate density argument survives these.",
+    "words": [
+      "delve", "delves", "delved", "delving",
+      "tapestry", "tapestries",
+      "showcase", "showcases", "showcasing", "showcased",
+      "underscore", "underscores", "underscoring", "underscored",
+      "meticulous", "meticulously",
+      "commendable",
+      "realm", "realms",
+      "elucidate", "elucidates",
+      "game-changer", "game-changing",
+      "ever-evolving"
+    ]
+  },
+  "strong_flag": {
+    "_comment": "Liang top-adjective/adverb tells + Kobak style verbs. One use = flag; cluster = rewrite.",
+    "words": [
+      "intricate", "intricacies",
+      "pivotal",
+      "testament",
+      "vibrant",
+      "boasts", "boasting",
+      "garner", "garnered",
+      "bolster", "bolstered", "bolstering",
+      "seamless", "seamlessly",
+      "groundbreaking",
+      "cutting-edge",
+      "invaluable",
+      "noteworthy",
+      "versatile",
+      "interplay",
+      "landscape",
+      "navigating",
+      "harness", "harnessing",
+      "leverage", "leveraging",
+      "foster", "fostering",
+      "unveil", "unveiling",
+      "skyrocket", "skyrocketing",
+      "revolutionize", "revolutionizing",
+      "transformative",
+      "comprehensively",
+      "aptly",
+      "lucidly"
+    ]
+  },
+  "density_watch": {
+    "_comment": "Common words with measured AI excess (Kobak common-set, best-10 marker delta=0.134). Fine individually; a cluster in one paragraph is a tell.",
+    "words": [
+      "crucial", "comprehensive", "notably", "particularly",
+      "additionally", "enhancing", "enhance", "exhibited",
+      "insights", "findings", "potential",
+      "across", "within",
+      "moreover", "furthermore",
+      "significant", "significantly",
+      "robust",
+      "highlighting", "emphasizing",
+      "align", "aligns", "aligned"
+    ]
+  },
+  "copulative_avoidance": {
+    "_comment": "Geng & Trotta via WP:AISIGNS: LLMs drop plain is/are/has >10% and substitute these. Suggest reverting to is/are/has.",
+    "phrases": [
+      "serves as a", "serves as an", "serves as the",
+      "stands as a", "stands as an", "stands as the",
+      "marks a", "marks an",
+      "represents a", "represents an",
+      "boasts a", "boasts an",
+      "features a", "features an",
+      "offers a glimpse",
+      "refers to a", "refers to an"
+    ]
+  },
+  "era_notes": {
+    "gpt4_2023": ["delve", "tapestry", "testament", "intricate", "interplay", "meticulous", "pivotal", "underscore", "boasts", "crucial", "garner", "vibrant", "landscape"],
+    "gpt4o_2024_25": ["align with", "enhance", "fostering", "showcasing", "highlighting", "pivotal", "underscore", "vibrant"],
+    "gpt5_2025_plus": ["emphasizing", "enhance", "highlighting", "showcasing"]
+  }
+}
