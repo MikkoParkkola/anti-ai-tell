@@ -32,9 +32,25 @@ git clone https://github.com/MikkoParkkola/anti-ai-tell
 cp -r anti-ai-tell/skills/anti-ai-tell ~/.claude/skills/
 ```
 
-**Cursor:** copy `adapters/cursor-rules.mdc` into your project's `.cursor/rules/`.
+**Every other major client** has a generated adapter in `adapters/`:
 
-**Any other client** (ChatGPT custom instructions, Gemini, local models): paste `adapters/SYSTEM_PROMPT.md` into the system prompt or custom-instruction field.
+| Client | File | Install location |
+|--------|------|------------------|
+| Codex CLI, Jules, Amp, Devin (AGENTS.md standard) | `adapters/AGENTS.md` | project root `AGENTS.md` |
+| Cursor | `adapters/cursor-rules.mdc` | `.cursor/rules/anti-ai-tell.mdc` |
+| GitHub Copilot | `adapters/copilot-instructions.md` | `.github/copilot-instructions.md` |
+| Cline / Roo Code | `adapters/clinerules.md` | project root `.clinerules` |
+| Windsurf | `adapters/windsurf-rules.md` | `.windsurf/rules/anti-ai-tell.md` |
+| Gemini CLI | `adapters/GEMINI.md` | project or `~/.gemini/GEMINI.md` |
+| Aider | `adapters/CONVENTIONS.md` | `aider --read CONVENTIONS.md` |
+| Zed | `adapters/zed-rules.md` | project root `.rules` |
+| ChatGPT | `adapters/chatgpt-custom-instructions.txt` | Settings → Personalization (fits the field limit) |
+| CLAUDE.md without plugin | `adapters/CLAUDE.md-snippet.md` | paste into CLAUDE.md |
+| Anything else | `adapters/SYSTEM_PROMPT.md` | system prompt / custom instructions |
+
+All adapters are generated from `data/vocabulary.json` by `build_adapters.py`,
+so the word lists cannot drift between clients. Edit the JSON, rerun the
+script, commit.
 
 **Linter only:**
 
