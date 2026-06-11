@@ -13,3 +13,4 @@ When writing prose (docs, comments, commit messages, user-facing text):
 - Take positions with reasons. No symmetric hedging. Push back on wrong premises.
 - No throat-clearing openers or "In conclusion" wrap-ups. No compulsive three-item lists.
 - Before finishing prose, re-scan for em-dashes and banned words; fix them.
+<!-- /anti-ai-tell (end of generated block) -->

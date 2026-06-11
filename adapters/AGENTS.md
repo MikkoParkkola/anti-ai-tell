@@ -56,3 +56,4 @@ REGISTER EXCEPTION
 
 Linter available: `python3 skills/anti-ai-tell/lint.py FILE` flags violations
 mechanically (13 checks, CI-gateable). Run it on prose before finishing.
+<!-- /anti-ai-tell (end of generated block) -->

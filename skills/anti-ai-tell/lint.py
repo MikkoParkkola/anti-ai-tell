@@ -107,9 +107,11 @@ def paragraphs(text: str) -> list[str]:
     return [p for p in re.split(r"\n\s*\n", text) if p.strip()]
 
 
-# Use-mention distinction: words inside code spans, italics, or double quotes
-# are MENTIONED (discussed), not USED. Mask them before vocabulary/parallelism
-# scans so a document ABOUT AI tells can pass its own lint.
+# Use-mention distinction: words inside fenced code blocks, code spans,
+# italics, or double quotes are MENTIONED (discussed), not USED. Mask them
+# before vocabulary/parallelism scans so a document ABOUT AI tells can pass
+# its own lint.
+FENCED_BLOCK = re.compile(r"^```.*?^```", re.M | re.S)
 MENTION_SPANS = [
     re.compile(r"`[^`\n]+`"),
     re.compile(r"\*[^*\n]+\*"),
@@ -119,6 +121,10 @@ MENTION_SPANS = [
 
 
 def mask_mentions(text: str) -> str:
+    # fenced code blocks first (multi-line; preserve line structure)
+    text = FENCED_BLOCK.sub(
+        lambda m: "\n".join(" " * len(ln) for ln in m.group(0).splitlines()), text
+    )
     for pat in MENTION_SPANS:
         text = pat.sub(lambda m: " " * len(m.group(0)), text)
     return text

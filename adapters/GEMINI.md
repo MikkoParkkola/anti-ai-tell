@@ -52,3 +52,4 @@ SELF-CHECK
 REGISTER EXCEPTION
 - For formal or academic targets, keep necessary passive voice and relax
   the sentence-length rules. Genre wins over these defaults.
+<!-- /anti-ai-tell (end of generated block) -->

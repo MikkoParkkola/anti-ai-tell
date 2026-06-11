@@ -218,10 +218,15 @@ assert len(chatgpt) <= 1500, f"ChatGPT block too long: {len(chatgpt)}"
 ADAPTERS["chatgpt-custom-instructions.txt"] = chatgpt + "\n"
 
 
+FOOTER = "<!-- /anti-ai-tell (end of generated block) -->\n"
+
+
 def main() -> None:
     outdir = ROOT / "adapters"
     outdir.mkdir(exist_ok=True)
     for name, content in ADAPTERS.items():
+        if name.endswith((".md", ".mdc")):
+            content = content.rstrip() + "\n" + FOOTER
         (outdir / name).write_text(content, encoding="utf-8")
         print(f"wrote adapters/{name} ({len(content)} chars)")
 

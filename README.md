@@ -1,38 +1,59 @@
 # anti-ai-tell
 
-A writing discipline, a linter, and a set of prompt blocks that keep prose from reading as AI-generated. Works as a Claude Code plugin, a standalone skill file, a Cursor rule, or a system-prompt block for any AI client.
+Make AI-assisted prose read like a person wrote it. This repo gives you three things:
 
-## Why this exists
+1. **Prompt rules** for your AI client that stop AI-ese before it gets written: banned vocabulary, sentence-rhythm requirements, no em-dashes, concrete over abstract, take a position.
+2. **A linter** (`lint.py`, zero dependencies, Python 3.10+) that flags 13 measured AI tells in any draft, with a `--json` CI mode.
+3. **A judgment checklist** for the tells no regex can catch: missing reasoning, sycophancy, symmetric hedging, nothing concrete anywhere.
 
-Readers have learned the cheap tells. Corpus studies put numbers on them: in 15.1 million PubMed abstracts, *delves* appeared at 28 times its expected frequency after ChatGPT arrived, *underscores* at 13.8 times, *showcasing* at 10.7 times (Kobak et al., Science Advances, 2025). In ICLR peer reviews, *meticulous* rose 34.7-fold (Liang et al., ICML 2024). People notice these words now, the same way they notice em-dashes and "it's not X, it's Y".
+Every banned word is backed by a published measurement, and a single generator keeps all eleven client formats in sync.
 
-Scrubbing the word list is necessary and insufficient. Eve Fairbanks argued in The Atlantic (May 2026) that the deeper tell is the missing train of thought: prose nobody can argue with because no reasoning ever happened in it. Jason Koebler at 404 Media compressed the same idea into one line: the tell is that "problems with all these elements exist equally & at once."
+## What it actually does
 
-So this repo works in three tiers:
+Run the linter on a draft and you get findings like these (from the included AI-slop fixture):
 
-| Tier | What | How |
-|------|------|-----|
-| 0 | Prevent AI-ese at generation time | prompt blocks in `adapters/` |
-| 1 | Catch the 13 measured mechanical tells | `lint.py`, CI-gateable |
-| 2 | The judgment pass: reasoning, friction, concreteness, commitment | checklist in `SKILL.md` |
+```
+FAIL sample-ai.txt: 12 Tier-1 tell(s):
+  - S8 hard-ban vocabulary (measured AI markers — replace): delve×1, tapestry×1, meticulous×1
+  - S3 uniform rhythm: sentence-length CV=0.26 (<0.45 = robotic). Mix short punches with long builds.
+  - S2 negative parallelism L1: It's not just about working harder, but about working smarter.
+  - S11 vague attribution L1: 'Studies show' — name the source.
+  - S9 copulative avoidance (prefer plain is/are/has): 'serves as a'×1
+```
+
+The prompt rules prevent most of that at generation time. The linter catches what slips through. The checklist covers what neither can: whether the text shows a mind at work.
+
+## Why bother
+
+Readers have learned the tells. In 15.1 million PubMed abstracts, *delves* appeared at 28 times its expected frequency after ChatGPT arrived, *underscores* at 13.8 times (Kobak et al., Science Advances, 2025). In ICLR peer reviews, *meticulous* rose 34.7-fold (Liang et al., ICML 2024). Hiring managers, editors, and customers now discount prose that smells like this; some readers stop at the first em-dash.
+
+Scrubbing words is necessary and insufficient. Eve Fairbanks argued in The Atlantic (May 2026) that the deeper tell is the missing train of thought: prose nobody can argue with because no reasoning happened in it. That layer needs judgment, so this repo ships a checklist for it instead of pretending a script can do it.
 
 ## Install
 
-**Claude Code (plugin):**
+### Fastest: one prompt to your AI agent
+
+Paste this to Claude Code, Cursor, Codex CLI, or any agent with shell access. The same prompt installs and upgrades; re-running is always safe:
+
+> Fetch https://raw.githubusercontent.com/MikkoParkkola/anti-ai-tell/master/INSTALL.md and follow it: detect which AI clients I use and install or upgrade the anti-ai-tell writing rules for each of them.
+
+The agent clones the repo, detects your clients, installs the right adapter for each (replacing any previous version), and verifies the linter against the included fixtures.
+
+### Claude Code plugin
 
 ```sh
 /plugin marketplace add MikkoParkkola/anti-ai-tell
 /plugin install anti-ai-tell@anti-ai-tell
 ```
 
-**Claude Code (bare skill):**
+### Claude Code bare skill
 
 ```sh
 git clone https://github.com/MikkoParkkola/anti-ai-tell
 cp -r anti-ai-tell/skills/anti-ai-tell ~/.claude/skills/
 ```
 
-**Every other major client** has a generated adapter in `adapters/`:
+### Any other client, by hand
 
 | Client | File | Install location |
 |--------|------|------------------|
@@ -48,23 +69,15 @@ cp -r anti-ai-tell/skills/anti-ai-tell ~/.claude/skills/
 | CLAUDE.md without plugin | `adapters/CLAUDE.md-snippet.md` | paste into CLAUDE.md |
 | Anything else | `adapters/SYSTEM_PROMPT.md` | system prompt / custom instructions |
 
-All adapters are generated from `data/vocabulary.json` by `build_adapters.py`,
-so the word lists cannot drift between clients. Edit the JSON, rerun the
-script, commit.
+All adapters are generated from `data/vocabulary.json` by `build_adapters.py`, so the word lists cannot drift between clients. Edit the JSON, rerun the script, commit. CI fails if generated files drift from the generator.
 
-**Linter only:**
+### Linter only
 
 ```sh
 python3 skills/anti-ai-tell/lint.py DRAFT.md          # docs, READMEs
 python3 skills/anti-ai-tell/lint.py DRAFT.txt --prose  # emails, posts
 python3 skills/anti-ai-tell/lint.py DRAFT.md --json    # CI integration
 ```
-
-No dependencies beyond Python 3.10.
-
-## What the linter checks
-
-Thirteen tells, each backed by a measurement or a primary source: em-dash overuse, negative parallelism, uniform sentence rhythm (coefficient of variation below 0.45 reads robotic), evenly paced paragraphs, throat-clearing openers, connective filler, closing bows, banned vocabulary (era-tagged in `data/vocabulary.json`), copulative avoidance ("serves as" where "is" belongs), rule-of-three compulsion, vague attribution, markdown artifacts in plain prose, and density clusters of AI-elevated common words.
 
 Try it on the included samples:
 
@@ -73,11 +86,15 @@ python3 skills/anti-ai-tell/lint.py tests/sample-ai.txt --prose     # 12 finding
 python3 skills/anti-ai-tell/lint.py tests/sample-human.txt --prose  # clean
 ```
 
-A clean lint run means the cheap tells are gone. It does not mean the text reads human. That judgment lives in Tier 2, and no regex can make it for you.
+## The 13 lint checks
+
+Em-dash overuse, negative parallelism ("not just X, but Y"), uniform sentence rhythm (coefficient of variation below 0.45 reads robotic), evenly paced paragraphs, throat-clearing openers, connective filler, closing bows ("In conclusion"), banned vocabulary (era-tagged), copulative avoidance ("serves as" where "is" belongs), rule-of-three compulsion, vague attribution ("studies show"), markdown artifacts in plain prose, and density clusters of AI-elevated common words.
+
+A clean lint run means the cheap tells are gone. It does not mean the text reads human. That judgment lives in the Tier-2 checklist in `skills/anti-ai-tell/SKILL.md`, and no regex can make it for you.
 
 ## Maintenance
 
-AI vocabulary drifts as models change: the *delve* era gave way to *showcasing*, then to *emphasizing*. `data/vocabulary.json` carries era tags and an update date. When a new corpus study lands, refresh the lists and bump the date. Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) page tracks the drift well and cites its sources.
+AI vocabulary drifts as models change: the *delve* era gave way to *showcasing*, then to *emphasizing*. `data/vocabulary.json` carries era tags and an update date. When a new corpus study lands, refresh the lists, rerun `build_adapters.py`, and bump the date. Wikipedia's [Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) page tracks the drift well and cites its sources.
 
 ## Sources
 
