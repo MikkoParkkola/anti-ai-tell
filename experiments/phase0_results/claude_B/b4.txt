@@ -1,0 +1,1 @@
+Cut your AWS bill by 43% without touching production code, like DuckDB's infrastructure team did.

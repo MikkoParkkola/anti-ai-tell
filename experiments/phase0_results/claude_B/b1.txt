@@ -1,0 +1,1 @@
+Jira costs $7/month per user and Atlassian's Sydney office still manually exports reports; we automate that for $2/month.

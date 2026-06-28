@@ -1,0 +1,9 @@
+{
+ "n_a": 6,
+ "n_b": 6,
+ "mean_dist_to_centroid_A_unanchored": 0.4885,
+ "mean_dist_to_centroid_B_anchored": 1.0,
+ "cohens_d": 3.819,
+ "verdict": "GO",
+ "claim": "anchor moves output OFF the unanchored centroid (de-generic)"
+}

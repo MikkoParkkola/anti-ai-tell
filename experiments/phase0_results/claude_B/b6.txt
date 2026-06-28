@@ -1,0 +1,1 @@
+Shopify's Portland team cut order processing from 4.2 seconds to 110ms using our API gateway.
