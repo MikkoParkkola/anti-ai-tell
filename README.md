@@ -1,12 +1,14 @@
 # anti-ai-tell
 
-Make AI-assisted prose read like a person wrote it. This repo gives you three things:
+Make AI-assisted work read like a person made it — in prose and in design. This repo gives you:
 
 1. **Prompt rules** for your AI client that stop AI-ese before it gets written: banned vocabulary, sentence-rhythm requirements, no em-dashes, concrete over abstract, take a position.
-2. **A linter** (`lint.py`, zero dependencies, Python 3.10+) that flags 13 measured AI tells in any draft, with a `--json` CI mode.
-3. **A judgment checklist** for the tells no regex can catch: missing reasoning, sycophancy, symmetric hedging, nothing concrete anywhere.
+2. **A prose linter** (`lint.py`, zero dependencies, Python 3.10+) that flags measured AI tells in any draft, with a `--json` CI mode.
+3. **A visual linter** (`visual_lint.py`) that flags the design defaults AI reaches for: indigo-500, Inter, gradient-clipped headlines, glassmorphism, untouched shadcn cards, emoji section headers, raster logos. Reads CSS, Tailwind, React/Vue/Svelte, Markdown, and SVG.
+4. **A style fingerprint** (`fingerprint.py`): one small file that holds your chosen accent, font, voice, and density, then feeds both generation and the linters' allow-list. Genericness is a variance deficit — the cure is a chosen point of view, not a longer blocklist.
+5. **A judgment checklist** for the tells no regex can catch: missing reasoning, sycophancy, symmetric hedging, nothing concrete anywhere.
 
-Every banned word is backed by a published measurement, and a single generator keeps all eleven client formats in sync.
+Every banned word is backed by a published measurement, and a single generator keeps all eleven client formats in sync. The Claude Code plugin wires three hooks: lint on every write, inject the fingerprint at session start, and ask you for a style anchor when a design task has none.
 
 ## What it actually does
 
@@ -22,6 +24,38 @@ FAIL sample-ai.txt: 12 Tier-1 tell(s):
 ```
 
 The prompt rules prevent most of that at generation time. The linter catches what slips through. The checklist covers what neither can: whether the text shows a mind at work.
+
+## Visual and design tells
+
+Prose is one medium. AI-generated interfaces, slides, logos, and documents converge on the same look for the same reason prose does: the model emits the centre of its training data. The visual linter catches the lintable defaults; the fingerprint supplies the point of view a linter can't invent.
+
+```sh
+python3 skills/anti-ai-tell/visual_lint.py client/src        # a whole UI directory
+python3 skills/anti-ai-tell/visual_lint.py styles.css --json # one file, CI mode
+```
+
+Pointed at a real climate dashboard's hand-written stylesheet, it flagged exactly the marks you'd expect:
+
+```
+FAIL index.css: 4 visual tell(s):
+  - V-CSS-3 gradient-clipped headline text — most-copied AI flourish  (×2)
+  - V-CSS-4 Inter as the typeface — the AI-default font
+  - V-CSS-6 glassmorphism blur — applied indiscriminately by AI       (×2)
+  - V-CSS-8 blanket large radius
+```
+
+Build or refine the fingerprint with derive-then-confirm — read what your existing work already implies, then ask only about the gaps:
+
+```sh
+python3 skills/anti-ai-tell/fingerprint.py derive site.css   # extract font, accent, radius
+python3 skills/anti-ai-tell/fingerprint.py gaps              # what to ask the user
+```
+
+A clean visual lint is the floor. The Tier-2 question the linter can't answer: is there a hierarchy, a point of view, a rough edge? Uniformity is itself the tell.
+
+## Batch sameness, not per-item guessing
+
+`variance_floor.py` scores a *set* of artifacts for variance collapse — the population signal that a batch came off one model. It refuses to judge a single artifact, because per-sample detection is provably unreliable (Sadasivan et al., 2303.11156). Use it on a folder of outputs, never on one.
 
 ## Why bother
 
@@ -86,9 +120,9 @@ python3 skills/anti-ai-tell/lint.py tests/sample-ai.txt --prose     # 12 finding
 python3 skills/anti-ai-tell/lint.py tests/sample-human.txt --prose  # clean
 ```
 
-## The 13 lint checks
+## The prose lint checks
 
-Em-dash overuse, negative parallelism ("not just X, but Y"), uniform sentence rhythm (coefficient of variation below 0.45 reads robotic), evenly paced paragraphs, throat-clearing openers, connective filler, closing bows ("In conclusion"), banned vocabulary (era-tagged), copulative avoidance ("serves as" where "is" belongs), rule-of-three compulsion, vague attribution ("studies show"), markdown artifacts in plain prose, and density clusters of AI-elevated common words.
+Em-dash overuse, negative parallelism ("not just X, but Y"), uniform sentence rhythm (coefficient of variation below 0.45 reads robotic), evenly paced paragraphs, throat-clearing openers, connective filler, closing bows ("In conclusion"), banned vocabulary (era-tagged), copulative avoidance ("serves as" where "is" belongs), rule-of-three compulsion, vague attribution ("studies show"), markdown artifacts in plain prose, density clusters of AI-elevated common words, paragraphs with no concrete anchor (no number, no named thing), and terms your own fingerprint says to avoid. The `--json` mode also emits a single machine-likeness score from 0 to 100.
 
 A clean lint run means the cheap tells are gone. It does not mean the text reads human. That judgment lives in the Tier-2 checklist in `skills/anti-ai-tell/SKILL.md`, and no regex can make it for you.
 
