@@ -101,19 +101,38 @@ def lint_file(path: Path, fp: dict) -> list[dict]:
     return _scan(text, kind, _allowed(fp))
 
 
-def _iter_targets(args: list[str]):
+# Vendored / generated paths: when walking a DIRECTORY these are library files,
+# not the author's design choices. shadcn drops dozens of primitives under
+# components/ui/ — flagging every untouched elevation token there buries the real
+# findings. Skip by default; --all overrides; an explicitly-named file always lints.
+_VENDOR = re.compile(
+    r"(^|/)(node_modules|dist|build|out|coverage|vendor|\.git|"
+    r"\.next|\.nuxt|\.svelte-kit|\.turbo|\.vite)(/|$)"
+    r"|/components/ui/|/ui/primitives/",
+    re.I,
+)
+
+
+def _collect(args: list[str], include_all: bool = False) -> tuple[list[Path], int]:
+    targets: list[Path] = []
+    skipped = 0
     for a in args:
         p = Path(a)
         if p.is_dir():
             for f in p.rglob("*"):
                 if f.is_file() and f.suffix.lower() in EXT_KIND:
-                    yield f
+                    if not include_all and _VENDOR.search(f.as_posix()):
+                        skipped += 1
+                    else:
+                        targets.append(f)
         elif p.is_file():
-            yield p
+            targets.append(p)  # explicit file: lint it regardless of path
+    return targets, skipped
 
 
 def main(argv: list[str]) -> int:
     as_json = "--json" in argv
+    include_all = "--all" in argv
     fp_path = None
     if "--fingerprint" in argv:
         i = argv.index("--fingerprint")
@@ -130,22 +149,24 @@ def main(argv: list[str]) -> int:
     spec.loader.exec_module(fpmod)
     fp = fpmod.load(fp_path)
 
+    targets, skipped = _collect(files, include_all)
     report = {}
     total = 0
-    for f in _iter_targets(files):
+    for f in targets:
         found = lint_file(f, fp)
         if found:
             report[str(f)] = found
             total += len(found)
 
     if as_json:
-        print(json.dumps({"clean": total == 0, "files": report}, indent=1))
+        print(json.dumps({"clean": total == 0, "files": report, "skipped_vendored": skipped}, indent=1))
         return 0 if total == 0 else 1
 
+    skip_note = f" (skipped {skipped} vendored/library file(s); --all to include)" if skipped else ""
     if total == 0:
-        print("OK: visual Tier-1 clean. Tier-2 (hierarchy, intent, the gestalt) still needs eyes.")
+        print("OK: visual Tier-1 clean. Tier-2 (hierarchy, intent, the gestalt) still needs eyes." + skip_note)
         return 0
-    print(f"FAIL: {total} visual tell(s) across {len(report)} file(s):")
+    print(f"FAIL: {total} visual tell(s) across {len(report)} file(s):{skip_note}")
     for f, found in report.items():
         print(f"  {f}")
         for x in found:

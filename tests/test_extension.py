@@ -143,4 +143,19 @@ with tempfile.TemporaryDirectory() as td:
     r2 = subprocess.run([sys.executable, str(hook)], input=pay2, capture_output=True, text=True, cwd=td)
     ok("V-CSS-1" in r2.stdout, "hook still warns on a non-allowed tell")
 
+# (precision) directory walk skips vendored/library files (shadcn components/ui/)
+with tempfile.TemporaryDirectory() as td:
+    root = Path(td)
+    (root / "components" / "ui").mkdir(parents=True)
+    (root / "app.css").write_text(".h{background-clip:text}")  # authored tell
+    (root / "components" / "ui" / "card.tsx").write_text(".c{background-clip:text}")  # library noise
+    tgt, skipped = vl._collect([str(root)])
+    names = {p.name for p in tgt}
+    ok("app.css" in names and "card.tsx" not in names, "dir walk skips components/ui/ by default")
+    ok(skipped == 1, "skipped vendored count reported (no silent drop)")
+    tgt_all, _ = vl._collect([str(root)], include_all=True)
+    ok("card.tsx" in {p.name for p in tgt_all}, "--all includes vendored files")
+    tgt_one, _ = vl._collect([str(root / "components" / "ui" / "card.tsx")])
+    ok(len(tgt_one) == 1, "explicitly-named vendored file still lints")
+
 print(f"\nALL {PASS} CHECKS PASSED")
