@@ -30,4 +30,4 @@ jobs:
           python3 build_adapters.py
           git diff --exit-code adapters/
       - name: plugin skill copy is in sync
-        run: diff -r skills/anti-ai-tell plugins/anti-ai-tell/skills/anti-ai-tell
+        run: diff -r -x '__pycache__' -x '*.pyc' skills/anti-ai-tell plugins/anti-ai-tell/skills/anti-ai-tell
