@@ -39,7 +39,10 @@ def main() -> int:
     except Exception:
         return 0
     fp_path = Path.cwd() / "fingerprint.json"
-    fp = fpmod.load(fp_path if fp_path.exists() else None)
+    # No fingerprint on disk = fresh repo: every slot is a gap, so ASK. Do NOT
+    # fall back to the seed (load(None) returns it) — the seed has zero gaps and
+    # would silently suppress the nudge, defeating "ask before defaults".
+    fp = fpmod.load(fp_path) if fp_path.exists() else {}
     gaps = fpmod.gaps(fp)
     if not gaps:
         return 0

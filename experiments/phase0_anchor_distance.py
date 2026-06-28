@@ -60,17 +60,27 @@ def cohens_d(x: list[float], y: list[float]) -> float:
     return (statistics.mean(y) - statistics.mean(x)) / pooled
 
 
-def gen(prompt: str, model: str, i: int) -> str:
+def gen(prompt: str, model: str, i: int) -> str | None:
+    """Generate one sample. Returns None on ANY failure (nonzero exit, empty
+    output, exception) so a broken generation is NEVER scored as a real sample —
+    otherwise a quota/auth/CLI failure silently corrupts the GO/KILL verdict."""
     p = f"{prompt} (variant {i}, be original)"
     try:
         out = subprocess.run(["claude", "-p", p, "--model", model],
                              capture_output=True, text=True, timeout=90)
-        return out.stdout.strip()
-    except Exception as e:
-        return f"[gen-failed {e}]"
+    except Exception:
+        return None
+    if out.returncode != 0:
+        return None
+    return out.stdout.strip() or None
 
 
 def score(a_texts: list[str], b_texts: list[str]) -> dict:
+    a_texts = [t for t in a_texts if t and t.strip()]
+    b_texts = [t for t in b_texts if t and t.strip()]
+    if len(a_texts) < 2 or len(b_texts) < 2:
+        return {"ok": False,
+                "error": f"need >=2 non-empty samples per arm; got A={len(a_texts)} B={len(b_texts)}"}
     a_vecs = [_vec(t) for t in a_texts]
     b_vecs = [_vec(t) for t in b_texts]
     centroid = _centroid(a_vecs)  # the unanchored centre
@@ -79,6 +89,7 @@ def score(a_texts: list[str], b_texts: list[str]) -> dict:
     d = cohens_d(a_d, b_d)
     go = statistics.mean(b_d) > statistics.mean(a_d) and d >= 0.5
     return {
+        "ok": True,
         "n_a": len(a_texts), "n_b": len(b_texts),
         "mean_dist_to_centroid_A_unanchored": round(statistics.mean(a_d), 4),
         "mean_dist_to_centroid_B_anchored": round(statistics.mean(b_d), 4),
@@ -99,12 +110,17 @@ def main(argv: list[str]) -> int:
     if "--run" in argv:
         n = int(argv[argv.index("--n") + 1]) if "--n" in argv else 10
         model = argv[argv.index("--model") + 1] if "--model" in argv else "haiku"
-        a = [gen(BASE, model, i) for i in range(n)]
-        b = [gen(BASE + ANCHOR, model, i) for i in range(n)]
+        a = [t for t in (gen(BASE, model, i) for i in range(n)) if t]
+        b = [t for t in (gen(BASE + ANCHOR, model, i) for i in range(n)) if t]
+        if len(a) < 2 or len(b) < 2:
+            print(json.dumps({"ok": False,
+                              "error": f"generation failed (quota/auth/CLI?): "
+                                       f"A={len(a)}/{n} B={len(b)}/{n} valid samples"}, indent=1))
+            return 1
         res = score(a, b)
-        res["samples"] = {"A0": a[0][:80], "B0": b[0][:80]}
+        res["samples"] = {"A0": a[0][:80], "B0": b[0][:80], "n_valid": [len(a), len(b)]}
         print(json.dumps(res, indent=1))
-        return 0
+        return 0 if res.get("ok") else 1
     print(__doc__)
     return 0
 

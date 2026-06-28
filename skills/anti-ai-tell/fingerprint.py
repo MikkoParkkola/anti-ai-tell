@@ -96,23 +96,40 @@ def gaps(fp: dict) -> list[tuple[str, str]]:
     return [(slot, q) for slot, q in SLOTS.items() if _get(fp, slot) is None]
 
 
+_JSON_PY = {"object": dict, "array": list, "string": str, "number": (int, float),
+            "integer": int, "boolean": bool}
+
+
+def _walk(val, schema: dict, path: str, errs: list[str]) -> None:
+    """Validate a value against a (sub)schema: types, enums, nested props, arrays."""
+    t = schema.get("type")
+    if t in _JSON_PY and not isinstance(val, _JSON_PY[t]):
+        errs.append(f"{path or 'root'}: expected {t}, got {type(val).__name__}")
+        return  # type wrong -> deeper checks are noise
+    if "enum" in schema and val not in schema["enum"]:
+        errs.append(f"{path}: '{val}' not in {'|'.join(map(str, schema['enum']))}")
+    if t == "object":
+        for k, sub in schema.get("properties", {}).items():
+            if isinstance(val, dict) and val.get(k) is not None:
+                _walk(val[k], sub, f"{path}.{k}" if path else k, errs)
+    elif t == "array" and "items" in schema:
+        for i, item in enumerate(val):
+            _walk(item, schema["items"], f"{path}[{i}]", errs)
+
+
 def validate(fp: dict) -> list[str]:
-    """Minimal structural validation against the schema's shape. Returns errors."""
+    """Validate against the full schema shape (types, enums, nested + array constraints).
+
+    Schema-driven so it can't drift from fingerprint.schema.json — every enum
+    (imagery.type, palette.mode, distinctiveness_dial) and array (voice.avoid) is
+    enforced. The one thing JSON-Schema type/enum can't express — the accent hex
+    pattern — stays a hand check.
+    """
     errs: list[str] = []
-    schema = json.loads(SCHEMA.read_text())
-    props = schema["properties"]
-    for key, val in fp.items():
-        if key in props and props[key].get("type") == "object" and not isinstance(val, dict):
-            errs.append(f"{key}: expected object, got {type(val).__name__}")
+    _walk(fp, json.loads(SCHEMA.read_text()), "", errs)
     acc = _get(fp, "palette.accent_hex")
-    if acc is not None and not re.match(r"^#?[0-9a-fA-F]{3,8}$", str(acc)):
+    if acc is not None and isinstance(acc, str) and not re.match(r"^#?[0-9a-fA-F]{3,8}$", acc):
         errs.append(f"palette.accent_hex: '{acc}' is not a hex color")
-    dial = fp.get("distinctiveness_dial")
-    if dial is not None and dial not in ("blend-in", "balanced", "stand-out"):
-        errs.append(f"distinctiveness_dial: '{dial}' not in blend-in|balanced|stand-out")
-    mode = _get(fp, "palette.mode")
-    if mode is not None and mode not in ("light", "dark", "either"):
-        errs.append(f"palette.mode: '{mode}' not in light|dark|either")
     return errs
 
 

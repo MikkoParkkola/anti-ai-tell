@@ -113,4 +113,34 @@ ok(sc["mean_dist_to_centroid_B_anchored"] > sc["mean_dist_to_centroid_A_unanchor
    "anchored set measured farther from unanchored centroid")
 ok(sc["verdict"] in ("GO", "KILL/PIVOT"), "verdict emitted")
 
+# ── regression: the 4 Codex pre-merge findings ──────────────────────────────
+print("codex-fixes:")
+# (3) validate honors NESTED schema constraints, not just top-level
+bad_nested = fp.validate({"imagery": {"type": "garbage"}, "voice": {"avoid": "not-a-list"}})
+ok(any("imagery.type" in e for e in bad_nested), "validate rejects bad imagery.type enum")
+ok(any("voice.avoid" in e for e in bad_nested), "validate rejects non-list voice.avoid")
+ok(fp.validate(fp.seed()) == [], "seed still validates clean under stricter check")
+# (1) fresh repo (no fingerprint.json) = every slot is a gap, so active-ask fires
+ok(len(fp.gaps({})) == len(fp.SLOTS), "empty fingerprint yields all gaps (fresh-repo asks)")
+ok(fp.gaps(fp.load(None)) == [], "load(None) seed still has no gaps (session inject unaffected)")
+# (4) phase0 refuses to score failed/empty generations instead of faking a verdict
+ok(p0.score(["only one"], [])["ok"] is False, "phase0 score refuses <2 samples")
+ok(p0.gen.__doc__ and "None" in p0.gen.__doc__, "phase0 gen documents None-on-failure")
+sc_empty = p0.score(["a real one", "", "  "], ["b one", "b two"])
+ok(sc_empty.get("ok") is False or sc_empty["n_a"] == 1, "phase0 score drops empty samples")
+
+# (2) post_tool_lint hook actually passes fingerprint.json so opt-outs are honored
+with tempfile.TemporaryDirectory() as td:
+    tdp = Path(td)
+    (tdp / "fingerprint.json").write_text(json.dumps({"lint_allow": ["V-CSS-4"]}))
+    (tdp / "x.css").write_text(".a{font-family:'Inter'}")
+    hook = ROOT / "hooks" / "post_tool_lint.py"
+    pay = json.dumps({"tool_name": "Write", "tool_input": {"file_path": str(tdp / "x.css")}})
+    r = subprocess.run([sys.executable, str(hook)], input=pay, capture_output=True, text=True, cwd=td)
+    ok("V-CSS-4" not in r.stdout, "hook honors fingerprint.json lint_allow (Inter opt-out)")
+    (tdp / "y.css").write_text(".a{background:indigo-500}")
+    pay2 = json.dumps({"tool_name": "Write", "tool_input": {"file_path": str(tdp / "y.css")}})
+    r2 = subprocess.run([sys.executable, str(hook)], input=pay2, capture_output=True, text=True, cwd=td)
+    ok("V-CSS-1" in r2.stdout, "hook still warns on a non-allowed tell")
+
 print(f"\nALL {PASS} CHECKS PASSED")

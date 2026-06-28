@@ -41,6 +41,12 @@ def main() -> int:
     args = [sys.executable, str(SKILL / linter), str(p), "--json"]
     if linter == "lint.py":
         args.append("--prose")
+    # Honor the repo's fingerprint.json opt-outs (accent/font allow-list,
+    # voice.avoid). Without this the hook lints against the seed and the
+    # "opt in via fingerprint.json" advice it prints would be a lie.
+    fp_json = Path.cwd() / "fingerprint.json"
+    if fp_json.exists():
+        args += ["--fingerprint", str(fp_json)]
     try:
         out = subprocess.run(args, capture_output=True, text=True, timeout=20)
         data = json.loads(out.stdout or "{}")
