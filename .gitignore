@@ -1,3 +1,9 @@
 __pycache__/
 *.pyc
 final_runs/
+
+# Machine-local dev tooling (auto-generated, not part of the package)
+.claude/
+AGENTS.md
+CLAUDE.md
+codebase-map.md
