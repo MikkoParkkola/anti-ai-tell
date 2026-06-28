@@ -281,20 +281,59 @@ def main() -> int:
                     + ", ".join(f"{w}×{n}" for w, n in c.most_common())
                 )
 
+    # S14 concreteness (AAT.TXT.2): a long paragraph with zero concrete anchors
+    # (no digit, no proper noun after the first word) is the "nothing concrete"
+    # tell — partly mechanical where Tier-2 judgment used to be required.
+    for idx, p in enumerate(masked_paras, 1):
+        words = p.split()
+        if len(words) <= 30:
+            continue
+        digits = len(re.findall(r"\d", p))
+        propers = len(re.findall(r"(?<=\s)[A-Z][a-z]{2,}", p))  # capitalized, not para-start
+        if digits == 0 and propers == 0:
+            findings.append(
+                f"S14 no concrete anchor in paragraph {idx}: {len(words)} words, "
+                "zero numbers, zero named things. Name one real number or thing."
+            )
+
+    # Voice fingerprint (AAT.TXT.4): the fingerprint's voice.avoid terms become
+    # extra banned vocabulary — the positive identity layer, not just a blocklist.
+    if "--fingerprint" in sys.argv:
+        fi = sys.argv.index("--fingerprint")
+        try:
+            fp = json.loads(open(sys.argv[fi + 1], encoding="utf-8").read())
+            avoid = (fp.get("voice") or {}).get("avoid") or []
+            for term in avoid:
+                if re.search(rf"\b{re.escape(term)}\b", masked, re.I):
+                    findings.append(f"S15 fingerprint voice.avoid hit: '{term}'")
+        except Exception:
+            pass
+
+    # Headline machine-likeness score (AAT.TXT.3): 0–100, low sentence-length
+    # variance + many tells => high. A single number that says "how machine."
+    _sl = [len(s.split()) for s in SENT_SPLIT.split(text) if len(s.split()) > 2]
+    if len(_sl) >= 6:
+        _cv = statistics.pstdev(_sl) / statistics.mean(_sl) if statistics.mean(_sl) else 0
+        _uniformity = max(0.0, 1 - min(_cv, 0.6) / 0.6)  # 1 = robotic, 0 = varied
+    else:
+        _uniformity = 0.0
+    ml_score = round(min(100, 100 * (0.6 * _uniformity + 0.08 * len(findings))))
+
     # ── report ──
     if as_json:
-        print(json.dumps({"file": label, "clean": not findings, "findings": findings}, indent=1))
+        print(json.dumps({"file": label, "clean": not findings,
+                          "machine_likeness": ml_score, "findings": findings}, indent=1))
         return 0 if not findings else 1
 
     if not findings:
         print(
-            f"OK {label}: Tier-1 clean. Now do the Tier-2 hand-pass (visible "
-            "reasoning, anti-sycophancy, concreteness, committed judgment) — "
-            "the linter can't see those."
+            f"OK {label}: Tier-1 clean (machine-likeness {ml_score}/100). Now do the "
+            "Tier-2 hand-pass (visible reasoning, anti-sycophancy, concreteness, "
+            "committed judgment) — the linter can't see those."
         )
         return 0
 
-    print(f"FAIL {label}: {len(findings)} Tier-1 tell(s):")
+    print(f"FAIL {label}: {len(findings)} Tier-1 tell(s), machine-likeness {ml_score}/100:")
     for f in findings:
         print(f"  - {f}")
     print("\nFix these, then the Tier-2 hand-pass (SKILL.md). Clean lint != reads human.")

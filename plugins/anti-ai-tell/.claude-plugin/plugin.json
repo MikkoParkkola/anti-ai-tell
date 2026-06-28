@@ -1,9 +1,11 @@
 {
   "name": "anti-ai-tell",
-  "version": "2.0.0",
-  "description": "Three-tier discipline for prose that doesn't read as AI-written: generation-time constraints, a mechanical linter for measured AI tells, and a judgment-pass checklist.",
+  "version": "2.1.0",
+  "description": "Cross-media discipline so prose AND design don't read as AI-generated. Generation-time rules, a mechanical linter for prose + visual tells, a style fingerprint that injects a chosen point of view, a population-level sameness detector, and hooks that lint-on-write and ask for a style anchor when one is missing.",
   "author": {
     "name": "Mikko Parkkola",
     "url": "https://github.com/MikkoParkkola"
-  }
+  },
+  "hooks": "./hooks/hooks.json",
+  "commands": "./commands"
 }

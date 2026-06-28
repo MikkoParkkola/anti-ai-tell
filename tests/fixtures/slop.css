@@ -1,0 +1,7 @@
+.btn { background: indigo-500; color: #6366f1; }
+.hero h1 { background-clip: text; font-family: 'Inter', system-ui; }
+.card { backdrop-filter: blur(12px); border-radius: 1rem; }
+.cta { background: linear-gradient(to right, from-indigo-500 to-purple-600); }
+.box:hover { transform: scale(1.05); }
+.wrap { max-width: max-w-7xl; box-shadow: shadow-md; color: slate-500; }
+.tile { border-radius: rounded-2xl; }

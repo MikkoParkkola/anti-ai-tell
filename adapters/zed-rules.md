@@ -12,4 +12,6 @@ When writing prose (docs, comments, commit messages, user-facing text):
 - Take positions with reasons. No symmetric hedging. Push back on wrong premises.
 - No throat-clearing openers or "In conclusion" wrap-ups. No compulsive three-item lists.
 - Before finishing prose, re-scan for em-dashes and banned words; fix them.
+
+VISUAL/DESIGN: never ship AI design defaults (Tailwind indigo-500/purple gradients, Inter-only, untouched shadcn cards, 3-column icon grids, emoji headers, markdown bleed in docs, plastic skin / orange-teal / gradient-blob logos). Ask the user for a style anchor when none is set and keep it. Run: python3 visual_lint.py FILE.
 <!-- /anti-ai-tell (end of generated block) -->

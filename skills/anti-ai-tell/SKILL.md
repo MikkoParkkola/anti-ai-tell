@@ -162,3 +162,43 @@ develops rather than arrives pre-assembled.
 The vocabulary lists rot as models change. Refresh `data/vocabulary.json` from
 Wikipedia's WP:AISIGNS era tables and new Kobak-style corpus studies; bump the
 `updated` field. Era notes in the JSON show the drift history.
+
+Run `refresh_vocab.py --snapshot new_terms.txt --dry-run --date 2026-09-01` to
+preview a vocabulary refresh deterministically before it lands.
+
+## Cross-media (visual) discipline
+
+Prose is one medium. AI-generated UI, images, logos, and documents converge on
+the same look for the same reason prose does: the model emits the centre of the
+training distribution. The fix is the same shape — surface deny-list (mechanical)
+plus a Tier-2 judgment pass — and one new idea: a positive **style fingerprint**
+that injects a chosen point of view, because you can't lint your way to taste.
+
+Full catalogue of 79 sourced visual tells: `research/visual-ai-tells.md`.
+
+| Tool | What it does |
+| ---- | ------------ |
+| `visual_lint.py FILE` | Tier-1 visual linter for CSS/Tailwind, markdown, .docx, SVG. Flags indigo-500, Inter, untouched shadcn, gradient-text, glassmorphism, emoji headers, markdown bleed, raster-in-SVG. Reads `fingerprint.json` as an allow-list. |
+| `fingerprint.py` | The style fingerprint: `derive <file>` extracts slots from existing work, `gaps` lists what to ask, `seed` prints the starting point, `validate` checks it. Seeding flow is derive-then-confirm. |
+| `variance_floor.py SET` | Population-level sameness detector. Scores a *batch* for variance collapse; never judges a single artifact (per-sample detection is provably unreliable — Sadasivan 2303.11156). |
+
+**The style fingerprint** (`fingerprint.json`) is the cure for genericness: one
+persistent off-mode anchor (accent, font, radius, voice, distinctiveness dial)
+that drives both generation and the linter's allow-list. When a design task has
+unset slots, ask the user — don't fill them with the centroid default.
+
+**Tier-2 visual judgment** (no linter sees this): is there a hierarchy, a point of
+view, a rough edge? Perfect uniformity is itself the tell.
+
+## Plugin hooks (automatic enforcement)
+
+The Claude plugin ships three hooks so the discipline fires without being invoked:
+
+- **PostToolUse (Write|Edit)** → lints the touched file, warns on tells (non-blocking).
+- **SessionStart** → injects the active fingerprint so generation carries the POV.
+- **UserPromptSubmit** → on a design task with an incomplete fingerprint, nudges
+  the agent to ask the user for a style anchor (the active-ask mechanism).
+
+Slash commands: `/aat-lint` (lint a file/dir), `/aat-fingerprint` (derive-then-confirm).
+
+## Files

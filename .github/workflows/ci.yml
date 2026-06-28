@@ -16,6 +16,15 @@ jobs:
         run: python3 skills/anti-ai-tell/lint.py tests/sample-human.txt --prose
       - name: README passes its own lint
         run: python3 skills/anti-ai-tell/lint.py README.md
+      - name: cross-media extension self-checks
+        run: python3 tests/test_extension.py
+      - name: visual linter flags the slop fixture
+        run: |
+          if python3 skills/anti-ai-tell/visual_lint.py tests/fixtures/slop.css; then
+            echo "slop.css passed visual lint - detector broken"; exit 1
+          fi
+      - name: visual linter passes the clean fixture
+        run: python3 skills/anti-ai-tell/visual_lint.py tests/fixtures/clean.css
       - name: adapters are in sync with the generator
         run: |
           python3 build_adapters.py

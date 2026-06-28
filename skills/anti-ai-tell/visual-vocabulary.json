@@ -1,0 +1,67 @@
+{
+  "_meta": {
+    "description": "Lintable visual AI-tell tokens, era-tagged. Sibling of vocabulary.json (text). Source: research/visual-ai-tells.md. The deny-list is the floor; fingerprint.json supplies the allow-list (a user-chosen accent is not a tell).",
+    "updated": "2026-06-28",
+    "evidence": {
+      "tailwind_indigo": "Adam Wathan public apology for bg-indigo-500 as Tailwind UI default; dev.to/alanwest 'Blame Tailwind's Indigo-500'",
+      "audit": "developersdigest 'AI Design Slop: 16 Patterns' — dark 34%, gradient bg 27%, icon-card 22%",
+      "fonts": "r/ClaudeAI 'spot a Claude app by its fonts'; Anthropic cookbook says avoid Inter"
+    }
+  },
+  "css": {
+    "hard_ban": {
+      "_comment": "The purple problem + literal defaults. Allow-listed if fingerprint chose them.",
+      "patterns": [
+        {"id": "V-CSS-1", "rx": "\\bindigo-[456]00\\b", "msg": "Tailwind indigo-500/600 — the AI 'purple problem' default"},
+        {"id": "V-CSS-2", "rx": "#6366[fF][12aА]?\\b|#4[fF]46[eE]5\\b", "msg": "indigo-500/600 hex — AI default accent"},
+        {"id": "V-CSS-3", "rx": "bg-clip-text\\b|background-clip\\s*:\\s*text", "msg": "gradient-clipped headline text — most-copied AI flourish"}
+      ]
+    },
+    "strong_flag": {
+      "patterns": [
+        {"id": "V-CSS-4", "rx": "font-family\\s*:\\s*['\"]?Inter\\b|--font[^:]*:\\s*['\"]?Inter\\b|\\bfont-inter\\b", "msg": "Inter as the typeface — the AI-default font"},
+        {"id": "V-CSS-5", "rx": "hover:scale-105\\b", "msg": "hover:scale-105 — copy-paste AI micro-interaction"},
+        {"id": "V-CSS-6", "rx": "backdrop-filter\\s*:\\s*blur|backdrop-blur(-|\\b)", "msg": "glassmorphism blur — applied indiscriminately by AI"},
+        {"id": "V-CSS-7", "rx": "from-(indigo|violet|purple)-[0-9]{3}\\s+to-(purple|pink|violet|fuchsia)-[0-9]{3}", "msg": "indigo->purple gradient — the AI hero default"}
+      ]
+    },
+    "density_watch": {
+      "_comment": "Fine once; a cluster of these in one file is the tell.",
+      "patterns": [
+        {"id": "V-CSS-8", "rx": "\\brounded-(xl|2xl|3xl)\\b", "msg": "blanket large radius"},
+        {"id": "V-CSS-9", "rx": "\\b(slate|zinc|neutral|stone)-[0-9]{3}\\b", "msg": "untouched Tailwind default gray ramp"},
+        {"id": "V-CSS-10", "rx": "\\bmax-w-7xl\\b", "msg": "default Tailwind content shell width"},
+        {"id": "V-CSS-11", "rx": "\\bshadow-(sm|md|lg)\\b", "msg": "untouched Tailwind elevation token"}
+      ]
+    }
+  },
+  "markdown": {
+    "hard_ban": {
+      "patterns": [
+        {"id": "V-MD-1", "rx": "^#{1,6}\\s+[\\u2600-\\u27BF\\U0001F000-\\U0001FAFF]", "msg": "emoji-as-section-header — ChatGPT's formatting signature"},
+        {"id": "V-MD-2", "rx": "[0-9]\\uFE0F?\\u20E3", "msg": "emoji-numbered list (1⃣ 2⃣) — ChatGPT reflex"}
+      ]
+    },
+    "strong_flag": {
+      "patterns": [
+        {"id": "V-MD-3", "rx": "^\\s*[-*]\\s+\\*\\*[^*]{1,40}\\*\\*\\s*:", "msg": "bold-label-opening-every-bullet — over-formatted AI doc"}
+      ]
+    }
+  },
+  "docx": {
+    "hard_ban": {
+      "_comment": "Markdown bleed: literal markdown rendered in a .docx means raw LLM paste.",
+      "patterns": [
+        {"id": "V-DOCX-1", "rx": "(^|\\s)#{1,6}\\s+\\w", "msg": "literal markdown heading (### ) inside a rendered docx — raw LLM paste"},
+        {"id": "V-DOCX-2", "rx": "\\*\\*[^*\\n]{1,60}\\*\\*", "msg": "literal **bold** markdown inside a rendered docx — raw LLM paste"}
+      ]
+    }
+  },
+  "svg": {
+    "hard_ban": {
+      "patterns": [
+        {"id": "V-SVG-1", "rx": "data:image/(png|jpeg|jpg);base64", "msg": "raster image embedded in an SVG — AI logo masquerading as vector"}
+      ]
+    }
+  }
+}

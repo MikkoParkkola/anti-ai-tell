@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/MikkoParkkola/anti-ai-tell/fingerprint.schema.json",
+  "title": "anti-ai-tell style fingerprint",
+  "description": "Single source of truth for a user's chosen point of view. Positive constraints injected at generation time and used as allow/deny config by the linters. The cure for genericness is one persistent off-mode anchor; this file IS that anchor.",
+  "type": "object",
+  "properties": {
+    "name": {"type": "string", "description": "Human label for this fingerprint, e.g. 'mikko-portfolio'"},
+    "fonts": {
+      "type": "object",
+      "properties": {
+        "body": {"type": "string", "description": "Chosen body typeface. A non-default choice de-generics, e.g. not Inter."},
+        "heading": {"type": "string"},
+        "mono": {"type": "string"}
+      }
+    },
+    "palette": {
+      "type": "object",
+      "properties": {
+        "accent_hex": {"type": "string", "pattern": "^#?[0-9a-fA-F]{3,8}$", "description": "The chosen brand accent. Anchors away from Tailwind indigo-500."},
+        "neutral_ramp": {"type": "string", "description": "Chosen gray family, e.g. 'warm-stone' not default 'slate'."},
+        "mode": {"type": "string", "enum": ["light", "dark", "either"]}
+      }
+    },
+    "shape": {
+      "type": "object",
+      "properties": {
+        "radius": {"type": "string", "description": "Corner personality, e.g. '4px' or 'sharp' or 'mixed' (not blanket rounded-2xl)."},
+        "shadow": {"type": "string", "description": "Elevation stance, e.g. 'flat', 'hard', 'layered'."}
+      }
+    },
+    "imagery": {
+      "type": "object",
+      "properties": {
+        "type": {"type": "string", "enum": ["photography", "illustration", "abstract", "none"]},
+        "grade": {"type": "string", "description": "Color grade direction; explicitly NOT orange-teal."},
+        "illustration_stance": {"type": "string"}
+      }
+    },
+    "voice": {
+      "type": "object",
+      "properties": {
+        "spec": {"type": "string", "description": "Prose voice in one paragraph. For Mikko this is the ELITE voice."},
+        "avoid": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "distinctiveness_dial": {
+      "type": "string",
+      "enum": ["blend-in", "balanced", "stand-out"],
+      "description": "Per-fingerprint default; sometimes the centroid is correct (a govt form). Overridable per artifact."
+    }
+  },
+  "additionalProperties": true
+}
