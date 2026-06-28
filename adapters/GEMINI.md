@@ -52,4 +52,19 @@ SELF-CHECK
 REGISTER EXCEPTION
 - For formal or academic targets, keep necessary passive voice and relax
   the sentence-length rules. Genre wins over these defaults.
+
+VISUAL / DESIGN (when generating UI, docs, slides, logos, or images)
+- Genericness is a variance deficit: AI defaults to the centre of design space.
+  The cure is one chosen point of view, not a blocklist. Ask the user for a
+  style anchor (accent color, font, density) when none is set, then keep it.
+- Never ship the AI defaults: Tailwind indigo-500 / purple gradients, Inter as
+  the only font, untouched shadcn neutral cards, the 3-column icon-card grid,
+  gradient-clipped headlines, blanket rounded-2xl, glassmorphism on everything.
+- Documents: no emoji section headers, no markdown bleed (### / ** in a .docx),
+  no table for every thought, no bold-label opening every bullet.
+- Images/logos: no plastic over-smooth skin, no orange-teal grade, no gradient-
+  blob logos, no text rendered as texture. Logos are vector, not raster.
+- Run the visual linter before shipping: python3 visual_lint.py FILE
+- Tier-2 (no linter sees this): is there a hierarchy, a point of view, a rough
+  edge? Perfect uniformity is itself the tell.
 <!-- /anti-ai-tell (end of generated block) -->
