@@ -12,6 +12,20 @@ Mechanic: each artifact -> bag-of-token-bigrams vector (stdlib, no embeddings de
 collapse = the population tell. Relative by design: compare to a reference batch or
 report the raw score with that caveat. Refuses when n < MIN_N.
 
+Known limitation (2026-07-21): this tool measures SOURCE-CODE sameness (token
+bigrams), not rendered-output sameness. It also cannot distinguish "AI-sameness"
+from a disciplined, intentional design system -- low variance describes both.
+Treat a low score as "investigate," never as a standalone verdict; corroborate
+with the Tier-2 human judgment pass before concluding genericness. Note too that
+this repo's own prescribed fix for genericness -- a consistently-applied style
+fingerprint -- will itself produce low population variance across a body of work
+that uses it correctly; a low score is not automatically a defect (see the
+project issue tracker for the open design question this raises). A
+rendered-output mode (screenshot -> embeddings -> cosine distance) is a tracked,
+separate, opt-in extra -- see the project issue tracker -- because it measures a
+different thing (what a viewer sees) and carries a real dependency cost the
+default linter should not pay.
+
 Usage:
     python3 variance_floor.py FILE_OR_DIR [--reference DIR] [--json] [--min-n 5]
 Exit code: 0 always for a valid batch (this is a measurement, never a gate/verdict).
