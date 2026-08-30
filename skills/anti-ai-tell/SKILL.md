@@ -1,10 +1,14 @@
 ---
 name: anti-ai-tell
-description: Make written prose not read as AI-generated, even when it is. Three-tier discipline. Tier 0 prevents AI-ese at generation time (voice constraints, banned vocabulary, rhythm rules). Tier 1 is a mechanical lint pass (lint.py) catching measured tells - banned words, em-dashes, negative parallelism, uniform rhythm, copulative avoidance, vague attribution. Tier 2 is the judgment pass that actually matters - visible reasoning, anti-sycophancy, concreteness, committed stance, intellectual friction. Use BEFORE shipping any external-facing or human-read prose - investor notes, public READMEs and issue bodies, marketing copy, blog posts, docs, customer email. Triggers - write, draft, edit, rewrite, copy, email, post, blog, README, announcement, "sound human", "doesn't sound like AI", "humanize", ship external prose.
+description: Make written prose not read as AI-generated, even when it is.
 triggers: doesn't sound like ai|sound human|humanize|anti-ai-tell|ai tell|reads like ai|written by ai|external copy|marketing copy|blog post|readme|announcement|ship this prose|edit this draft
 effort: medium
 version: 2026.06.11-v2
 ---
+
+## When this fires
+
+Make written prose not read as AI-generated, even when it is. Three-tier discipline. Tier 0 prevents AI-ese at generation time (voice constraints, banned vocabulary, rhythm rules). Tier 1 is a mechanical lint pass (lint.py) catching measured tells - banned words, em-dashes, negative parallelism, uniform rhythm, copulative avoidance, vague attribution. Tier 2 is the judgment pass that actually matters - visible reasoning, anti-sycophancy, concreteness, committed stance, intellectual friction. Use BEFORE shipping any external-facing or human-read prose - investor notes, public READMEs and issue bodies, marketing copy, blog posts, docs, customer email. Triggers - write, draft, edit, rewrite, copy, email, post, blog, README, announcement, "sound human", "doesn't sound like AI", "humanize", ship external prose.
 
 # anti-ai-tell — prose that doesn't broadcast its origin
 
