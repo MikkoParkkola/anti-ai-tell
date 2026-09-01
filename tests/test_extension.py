@@ -158,4 +158,32 @@ with tempfile.TemporaryDirectory() as td:
     tgt_one, _ = vl._collect([str(root / "components" / "ui" / "card.tsx")])
     ok(len(tgt_one) == 1, "explicitly-named vendored file still lints")
 
+print("skill dispatch description:")
+fm = (SKILL / "SKILL.md").read_text(encoding="utf-8").split("---", 2)
+ok(len(fm) >= 3 and "sound human" in fm[1] and "Three-tier" in fm[1],
+   "SKILL.md description keeps auto-activation triggers")
+plugin_fm = (ROOT / "plugins" / "anti-ai-tell" / "skills" / "anti-ai-tell" / "SKILL.md").read_text(encoding="utf-8").split("---", 2)
+ok(len(plugin_fm) >= 3 and "sound human" in plugin_fm[1] and "Three-tier" in plugin_fm[1],
+   "plugin SKILL.md description matches")
+
+print("s5 from-the-moment:")
+s5 = subprocess.run(
+    [sys.executable, str(SKILL / "lint.py"), "-", "--json"],
+    input="From the moment you open the app, everything just works.\n",
+    capture_output=True,
+    text=True,
+)
+s5_data = json.loads(s5.stdout)
+ok(any("S5" in f and "from the moment" in f.lower() for f in s5_data["findings"]),
+   "S5 flags a from-the-moment-you opener")
+s5_mid = subprocess.run(
+    [sys.executable, str(SKILL / "lint.py"), "-", "--json"],
+    input="The product changed from the moment you mentioned last quarter.\n",
+    capture_output=True,
+    text=True,
+)
+s5_mid_data = json.loads(s5_mid.stdout)
+ok(not any("S5" in f for f in s5_mid_data["findings"]),
+   "S5 does not flag the phrase mid-paragraph")
+
 print(f"\nALL {PASS} CHECKS PASSED")

@@ -78,6 +78,7 @@ plus overall Top tells and sources)*
 | A10 | **Bento grid of mismatched-size cards** | Density-watch | The post-3-column "modern" upgrade everyone copied; distinctive once, generic in aggregate. |
 | A11 | **"Trusted by" logo cloud of desaturated/placeholder logos** | Density-watch | A fixed template slot, often shipped with filler logos whether or not real customers exist. |
 | A12 | **"Tailwind Blue" fallback** (`blue-500`/`600`) when not purple | Density-watch | Same defaulting behavior pointed at the second-most-common token; changes the hue, not the genericness. |
+| A13 | **Formulaic offset composition** — repeated alternating left/right image-text cards, decorative objects translated outside their container, arbitrary negative margins, every section using the same 60/40 stagger | Strong-flag | NOT the same tell as asymmetry itself — a single deliberate offset is a legitimate "rough edge" (see thesis section). The tell is *recurrence without a hierarchy change*: the same offset move repeated 3+ times with no compositional reason. **Must check `fingerprint.json` for a declared structural-rhythm slot before flagging** — "3+ hits" alone still false-positives a disciplined brand rhythm the same way naive asymmetry would, just with a higher threshold. Source: Design Arena, "How OpenAI's Sol Finally Learned Design Taste" (2026-07-15), which named "offset compositions" as a pattern the reviewed model learned to suppress. |
 
 ---
 

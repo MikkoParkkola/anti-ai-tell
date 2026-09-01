@@ -78,7 +78,10 @@ ANTITHESIS = [
 OPENERS = re.compile(
     r"^\s*(in today'?s [\w\s-]*world|it'?s worth noting|at its core|in the (ever-)?evolving|"
     r"in the realm of|when it comes to|in an era|needless to say|first and foremost|"
-    r"it is important to (note|remember|understand)|in the world of|have you ever wondered)",
+    r"it is important to (note|remember|understand)|in the world of|have you ever wondered|"
+    # "from the moment you…" — named by Pangram (the only detector scoring 4/4 in
+    # PopSci's 2026-07 five-tool test) as the giveaway phrase in ChatGPT output.
+    r"from the moment (you|it|they|we))",
     re.I,
 )
 FILLER = re.compile(
