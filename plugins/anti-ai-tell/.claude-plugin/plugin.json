@@ -6,6 +6,7 @@
     "name": "Mikko Parkkola",
     "url": "https://github.com/MikkoParkkola"
   },
+  "license": "MIT",
   "hooks": "./hooks/hooks.json",
   "commands": "./commands"
 }
