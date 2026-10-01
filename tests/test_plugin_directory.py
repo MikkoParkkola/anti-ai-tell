@@ -92,9 +92,16 @@ ok((PLUGIN / "LICENSE").read_bytes() == (ROOT / "LICENSE").read_bytes(),
 
 privacy = (PLUGIN / "PRIVACY.md").read_text(encoding="utf-8")
 ok(SUPPORT in privacy, "PRIVACY.md contains the GitHub issues support line")
+ok("Mikko Parkkola" in privacy, "PRIVACY.md names Mikko Parkkola")
 ok("text is not sent to the author" in privacy.lower(),
    "PRIVACY.md says text is not sent to the author")
-ok("@" not in privacy and not re.search(r"(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}", privacy),
-   "PRIVACY.md contains no email")
+ok("reads the files" in privacy and "fingerprint" in privacy and "stores" in privacy.lower(),
+   "PRIVACY.md says what the plugin reads and stores")
+email = re.compile(r"(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}")
+for path in PLUGIN.rglob("*"):
+    if path.is_file():
+        ok(email.search(path.read_text(encoding="utf-8")) is None, f"{path.relative_to(ROOT)} has no email")
+ok("mcpServers" not in manifest, "plugin is skills and hooks, not an MCP server")
+ok(not (PLUGIN / ".mcp.json").exists(), "plugin folder has no .mcp.json")
 
 print(f"\nALL {PASS} CHECKS PASSED")
