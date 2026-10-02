@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Daily heartbeat. Five JSON fields. Failure is ignored. Importing does no I/O."""
+"""Daily heartbeat. Failure is ignored. Importing does no I/O."""
 
 from __future__ import annotations
 
@@ -114,10 +114,70 @@ def mark_sent(directory: Path, now: datetime) -> None:
 
 
 def install_id(directory: Path) -> str:
+    return ensure_install(directory)[0]
+
+
+def ensure_install(directory: Path) -> tuple[str, bool]:
     path = directory / "install-id"
     try:
         existing = path.read_text(encoding="utf-8").strip()
         if existing:
+            return existing, False
+    except OSError:
+        pass
+    value = secrets.token_hex(16)
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+        directory.chmod(0o700)
+        path.write_text(value, encoding="utf-8")
+        path.chmod(0o600)
+    except OSError:
+        return "", False
+    return value, True
+
+
+def _valid_day(value: str) -> bool:
+    if len(value) != 10 or value[4] != "-" or value[7] != "-":
+        return False
+    try:
+        parsed = datetime.strptime(value, "%Y-%m-%d")
+    except ValueError:
+        return False
+    return parsed.strftime("%Y-%m-%d") == value
+
+
+def install_date(directory: Path, now: datetime, fresh: bool) -> str:
+    path = directory / "install-date"
+    try:
+        existing = path.read_text(encoding="utf-8").strip()
+        if _valid_day(existing):
+            return existing
+    except OSError:
+        pass
+    day = now.astimezone(timezone.utc).strftime("%Y-%m-%d")
+    if not fresh:
+        try:
+            birth = (directory / "install-id").stat().st_birthtime
+            if birth > 86400:
+                day = datetime.fromtimestamp(birth, timezone.utc).strftime("%Y-%m-%d")
+        except (AttributeError, OSError, OverflowError, ValueError):
+            pass
+    try:
+        directory.mkdir(parents=True, exist_ok=True)
+        directory.chmod(0o700)
+        path.write_text(day, encoding="utf-8")
+        path.chmod(0o600)
+    except OSError:
+        pass
+    return day
+
+
+def machine_id(home: Path) -> str:
+    directory = home / ".revaluator"
+    path = directory / "machine-id"
+    try:
+        existing = path.read_text(encoding="utf-8").strip()
+        if len(existing) == 32 and all(ch in "0123456789abcdef" for ch in existing):
             return existing
     except OSError:
         pass
@@ -132,7 +192,7 @@ def install_id(directory: Path) -> str:
     return value
 
 
-def build_body(version: str, install: str) -> bytes | None:
+def build_body(version: str, install: str, installed: str = "", machine: str = "") -> bytes | None:
     payload: dict[str, str] = {
         "project": PROJECT,
         "event": EVENT,
@@ -141,6 +201,10 @@ def build_body(version: str, install: str) -> bytes | None:
     }
     if install:
         payload["install_id"] = install
+    if installed:
+        payload["install_date"] = installed
+    if machine:
+        payload["machine_id"] = machine
     body = json.dumps(payload).encode("utf-8")
     if len(body) > MAX_BODY:
         return None
@@ -217,7 +281,14 @@ def _send(version: str, *, env, home, now, poster) -> None:
     if not due(directory, clock):
         return
     mark_sent(directory, clock)
-    body = build_body(version, install_id(directory))
+    install, fresh = ensure_install(directory)
+    root = directory.parents[1] if home is None else home
+    body = build_body(
+        version,
+        install,
+        install_date(directory, clock, fresh),
+        machine_id(root),
+    )
     if body is None:
         return
     if poster is None:

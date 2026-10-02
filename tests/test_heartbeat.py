@@ -57,11 +57,22 @@ def opt_out_writes_nothing() -> None:
         )
         assert len(posts) == 1
         payload = json.loads(posts[0])
-        assert set(payload) == {"project", "event", "version", "runtime", "install_id"}
+        assert set(payload) == {
+            "project",
+            "event",
+            "version",
+            "runtime",
+            "install_id",
+            "install_date",
+            "machine_id",
+        }
         assert payload["project"] == "anti-ai-tell"
         assert payload["event"] == "heartbeat"
         assert payload["version"] == "2.1.0"
+        assert payload["install_date"] == "2026-10-02"
         assert len(payload["install_id"]) == 32
+        assert len(payload["machine_id"]) == 32
+        assert (home / ".revaluator" / "machine-id").read_text(encoding="utf-8") == payload["machine_id"]
 
 
 def slot_is_claimed_before_the_second_call() -> None:
