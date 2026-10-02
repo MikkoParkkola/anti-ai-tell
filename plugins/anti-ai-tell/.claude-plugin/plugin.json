@@ -6,6 +6,11 @@
     "name": "Mikko Parkkola",
     "url": "https://github.com/MikkoParkkola"
   },
+  "homepage": "https://github.com/MikkoParkkola/anti-ai-tell/tree/directory/plugin-ready/plugins/anti-ai-tell",
+  "repository": "https://github.com/MikkoParkkola/anti-ai-tell",
+  "documentationUrl": "https://github.com/MikkoParkkola/anti-ai-tell/blob/directory/plugin-ready/plugins/anti-ai-tell/README.md",
+  "privacyPolicyUrl": "https://github.com/MikkoParkkola/anti-ai-tell/blob/directory/plugin-ready/plugins/anti-ai-tell/PRIVACY.md",
+  "supportUrl": "https://github.com/MikkoParkkola/anti-ai-tell/issues",
   "license": "MIT",
   "hooks": "./hooks/hooks.json",
   "commands": "./commands"
