@@ -119,6 +119,8 @@ for path in PLUGIN.rglob("*"):
     if path.is_file():
         ok(email.search(path.read_text(encoding="utf-8")) is None, f"{path.relative_to(ROOT)} has no email")
 ok("mcpServers" not in manifest, "plugin is skills and hooks, not an MCP server")
+ok("hooks" not in manifest and (PLUGIN / "hooks" / "hooks.json").is_file(),
+   "hooks/hooks.json is present and not re-listed in plugin.json")
 ok(not (PLUGIN / ".mcp.json").exists(), "plugin folder has no .mcp.json")
 
 print(f"\nALL {PASS} CHECKS PASSED")

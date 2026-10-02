@@ -12,6 +12,5 @@
   "privacyPolicyUrl": "https://github.com/MikkoParkkola/anti-ai-tell/blob/directory/plugin-ready/plugins/anti-ai-tell/PRIVACY.md",
   "supportUrl": "https://github.com/MikkoParkkola/anti-ai-tell/issues",
   "license": "MIT",
-  "hooks": "./hooks/hooks.json",
   "commands": "./commands"
 }
