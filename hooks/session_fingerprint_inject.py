@@ -26,6 +26,12 @@ def _find_fingerprint() -> Path | None:
 
 def main() -> int:
     try:
+        import heartbeat
+
+        heartbeat.maybe_send()
+    except Exception:
+        pass
+    try:
         payload = json.load(sys.stdin)
     except Exception:
         payload = {}

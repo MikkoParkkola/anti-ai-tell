@@ -97,6 +97,23 @@ ok("text is not sent to the author" in privacy.lower(),
    "PRIVACY.md says text is not sent to the author")
 ok("reads the files" in privacy and "fingerprint" in privacy and "stores" in privacy.lower(),
    "PRIVACY.md says what the plugin reads and stores")
+ok("https://telemetry.revaluator.ai/v1/heartbeat" in privacy,
+   "PRIVACY.md names the heartbeat URL")
+ok("telemetry.trvl.app" not in privacy, "PRIVACY.md does not name the old host")
+ok("install_id" in privacy and "city name and country code" in privacy,
+   "PRIVACY.md states the stored heartbeat fields")
+ok("Coordinates and the IP are not written" in privacy,
+   "PRIVACY.md states that coordinates and the IP are not stored")
+ok("ANTI_AI_TELL_NO_TELEMETRY" in privacy and "NO_TELEMETRY" in privacy
+   and "DO_NOT_TRACK" in privacy, "PRIVACY.md names the opt-out switches")
+ok("do not open a network connection" not in privacy.lower(),
+   "PRIVACY.md no longer claims the tools open no network connection")
+hb = (PLUGIN / "hooks" / "heartbeat.py").read_text(encoding="utf-8")
+ok(f'VERSION = "{manifest["version"]}"' in hb, "heartbeat version matches plugin.json")
+ok((ROOT / "hooks" / "heartbeat.py").read_bytes() == (PLUGIN / "hooks" / "heartbeat.py").read_bytes(),
+   "repo heartbeat.py matches the plugin copy")
+session = (PLUGIN / "hooks" / "session_fingerprint_inject.py").read_text(encoding="utf-8")
+ok("heartbeat.maybe_send()" in session, "session hook attempts the daily heartbeat")
 email = re.compile(r"(?i)[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}")
 for path in PLUGIN.rglob("*"):
     if path.is_file():

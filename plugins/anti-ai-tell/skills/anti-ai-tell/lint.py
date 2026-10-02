@@ -134,6 +134,13 @@ def mask_mentions(text: str) -> str:
 
 
 def main() -> int:
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "hooks"))
+        import heartbeat as _heartbeat
+
+        _heartbeat.maybe_send()
+    except Exception:
+        pass
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     as_json = "--json" in sys.argv
     prose_mode = "--prose" in sys.argv
