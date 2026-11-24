@@ -9,7 +9,7 @@ For external/human-read prose (READMEs, docs, issue and PR bodies, email,
 marketing copy):
 
 - Never use: delve, tapestry, showcase, underscore, meticulous, commendable, realm, elucidate, game-changer, ever-evolving (or their inflections).
-- Ration (max one per document): intricate, pivotal, testament, vibrant, boast, garner, bolster, seamless, groundbreaking, cutting-edge, invaluable, leverage, harness, unveil, transformative, landscape.
+- Ration (max one per document): intricate, pivotal, testament, vibrant, boast, garner, bolster, seamless, groundbreaking, cutting-edge, invaluable, leverage, harness, unveil, transformative, landscape, load-bearing.
 - Write is/are/has, never "serves as / stands as / boasts / represents".
 - No em-dashes. No "not X, but Y" constructions; assert directly.
 - Mix sentence lengths; never three similar-length sentences in a row. Vary paragraph length.
