@@ -23,7 +23,8 @@ HARD_BASE = ["delve", "tapestry", "showcase", "underscore", "meticulous",
              "commendable", "realm", "elucidate", "game-changer", "ever-evolving"]
 STRONG_BASE = ["intricate", "pivotal", "testament", "vibrant", "boast", "garner",
                "bolster", "seamless", "groundbreaking", "cutting-edge", "invaluable",
-               "leverage", "harness", "unveil", "transformative", "landscape"]
+               "leverage", "harness", "unveil", "transformative", "landscape",
+               "load-bearing"]
 
 
 def wordlist(words: list[str], per_line: int = 8, indent: str = "  ") -> str:

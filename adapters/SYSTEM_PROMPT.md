@@ -16,11 +16,11 @@ VOCABULARY
   showcasing, showcased, underscore, underscores, underscoring, underscored, meticulous, meticulously,
   commendable, realm, realms, elucidate, elucidates, game-changer, game-changing, ever-evolving
 - Use these sparingly, at most one per document, only with cause:
-  intricate, intricacies, pivotal, testament, vibrant, boasts, boasting, garner,
-  garnered, bolster, bolstered, bolstering, seamless, seamlessly, groundbreaking, cutting-edge,
-  invaluable, noteworthy, versatile, interplay, landscape, navigating, harness, harnessing,
-  leverage, leveraging, foster, fostering, unveil, unveiling, skyrocket, skyrocketing,
-  revolutionize, revolutionizing, transformative, comprehensively, aptly, lucidly
+  intricate, intricacies, pivotal, load-bearing, testament, vibrant, boasts, boasting,
+  garner, garnered, bolster, bolstered, bolstering, seamless, seamlessly, groundbreaking,
+  cutting-edge, invaluable, noteworthy, versatile, interplay, landscape, navigating, harness,
+  harnessing, leverage, leveraging, foster, fostering, unveil, unveiling, skyrocket,
+  skyrocketing, revolutionize, revolutionizing, transformative, comprehensively, aptly, lucidly
 - Watch the density of these common words; a cluster in one paragraph is a tell:
   crucial, comprehensive, notably, particularly, additionally, enhancing, enhance, exhibited,
   insights, findings, potential, across, within, moreover, furthermore, significant,
